@@ -19,6 +19,18 @@ const addJobDetials = async (req, res) => {
     }
 }
 
+const getJobDetails = async (req, res) => {
+    const jobId = req.params.jobId;
+    console.log(jobId)
+    try {
+      const job = await jobService.getJobDetails(jobId);
+      res.json(job);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+
+}
+
 const assignJobToHrByAccountManager = async (req, res) => {
     const jobAssignment = req.body;
     try {
@@ -83,6 +95,7 @@ const updateCandidateOfferStatus = async (req, res) => {
 module.exports = {
     getAllJobs,
     addJobDetials,
+    getJobDetails,
     assignJobToHrByAccountManager,
     getAccountManagerJobs,
     getHRJobs,

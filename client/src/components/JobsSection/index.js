@@ -16,54 +16,54 @@ const apiStatusConstant = {
   failure: 'FAILURE',
 }
 
-const jobsListDummy = [
-  {
-    id: 1,
-    companyLogoUrl: '/victaman-logo.png',
-    compname: 'Victaman',
-    employmentType: 'Full Time',
-    jobDescription: "A software engineer is responsible for the design, development, and delivery of software. They work with programming languages, frameworks, databases, and servers to create software solutions that meet their company's needs. They also test software to ensure it's functioning properly, and troubleshoot problems when they arise. Software engineers may work on a variety of projects, from creating company apps to building out websites to designing software for robots.",
-    location: 'Hyderabad',
-    packagePerAnnum: '10 LPA',
-    role: 'Software Developer - ReactJS',
-    category: 'Software Development',
-    workType: 'on-site',
-    hiringCommision: '10%',
-    hiringNeed: 'Immediate',
-  },
-  {
-    id: 2,
-    companyLogoUrl: '/victaman-logo.png',
-    compname: 'Victaman',
-    employmentType: 'Full Time',
-    jobDescription: "A software engineer is responsible for the design, development, and delivery of software. They work with programming languages, frameworks, databases, and servers to create software solutions that meet their company's needs. They also test software to ensure it's functioning properly, and troubleshoot problems when they arise. Software engineers may work on a variety of projects, from creating company apps to building out websites to designing software for robots.",
-    location: 'Hyderabad',
-    packagePerAnnum: '10 LPA',
-    role: 'Software Developer - ReactJS',
-    category: 'Software Development',
-    workType: 'on-site',
-    hiringCommision: '10%',
-    hiringNeed: 'Immediate',
-  },
-  {
-    id: 3,
-    companyLogoUrl: '/victaman-logo.png',
-    compname: 'Victaman',
-    employmentType: 'Full Time',
-    jobDescription: "A software engineer is responsible for the design, development, and delivery of software. They work with programming languages, frameworks, databases, and servers to create software solutions that meet their company's needs. They also test software to ensure it's functioning properly, and troubleshoot problems when they arise. Software engineers may work on a variety of projects, from creating company apps to building out websites to designing software for robots.",
-    location: 'Hyderabad',
-    packagePerAnnum: '10 LPA',
-    role: 'Software Developer - ReactJS',
-    category: 'Software Development',
-    workType: 'on-site',
-    hiringCommision: '10%',
-    hiringNeed: 'Immediate',
-  }
-]
+// const jobsListDummy = [
+//   {
+//     id: 1,
+//     companyLogoUrl: '/victaman-logo.png',
+//     compname: 'Victaman',
+//     employmentType: 'Full Time',
+//     jobDescription: "A software engineer is responsible for the design, development, and delivery of software. They work with programming languages, frameworks, databases, and servers to create software solutions that meet their company's needs. They also test software to ensure it's functioning properly, and troubleshoot problems when they arise. Software engineers may work on a variety of projects, from creating company apps to building out websites to designing software for robots.",
+//     location: 'Hyderabad',
+//     packagePerAnnum: '10 LPA',
+//     role: 'Software Developer - ReactJS',
+//     category: 'Software Development',
+//     workType: 'on-site',
+//     hiringCommision: '10%',
+//     hiringNeed: 'Immediate',
+//   },
+//   {
+//     id: 2,
+//     companyLogoUrl: '/victaman-logo.png',
+//     compname: 'Victaman',
+//     employmentType: 'Full Time',
+//     jobDescription: "A software engineer is responsible for the design, development, and delivery of software. They work with programming languages, frameworks, databases, and servers to create software solutions that meet their company's needs. They also test software to ensure it's functioning properly, and troubleshoot problems when they arise. Software engineers may work on a variety of projects, from creating company apps to building out websites to designing software for robots.",
+//     location: 'Hyderabad',
+//     packagePerAnnum: '10 LPA',
+//     role: 'Software Developer - ReactJS',
+//     category: 'Software Development',
+//     workType: 'on-site',
+//     hiringCommision: '10%',
+//     hiringNeed: 'Immediate',
+//   },
+//   {
+//     id: 3,
+//     companyLogoUrl: '/victaman-logo.png',
+//     compname: 'Victaman',
+//     employmentType: 'Full Time',
+//     jobDescription: "A software engineer is responsible for the design, development, and delivery of software. They work with programming languages, frameworks, databases, and servers to create software solutions that meet their company's needs. They also test software to ensure it's functioning properly, and troubleshoot problems when they arise. Software engineers may work on a variety of projects, from creating company apps to building out websites to designing software for robots.",
+//     location: 'Hyderabad',
+//     packagePerAnnum: '10 LPA',
+//     role: 'Software Developer - ReactJS',
+//     category: 'Software Development',
+//     workType: 'on-site',
+//     hiringCommision: '10%',
+//     hiringNeed: 'Immediate',
+//   }
+// ]
 
 const JobsSection = () => {
 
-    const [jobsList, setJobsList] = useState(jobsListDummy)
+    const [jobsList, setJobsList] = useState([])
     const [employmentTypeList, setEmploymentTypeList] = useState([])
     const [minimumPackageList, setMinimumPackageList] = useState([])
     const [industryTypeList, setIndustryTypeList] = useState([])
@@ -153,7 +153,16 @@ const JobsSection = () => {
 
   const getJobsCard = async () => {
     setApiStatus(apiStatusConstant.inProgress)
-    const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${employmentTypeList.join()}&minimum_package=${minimumPackageList}&search=${searchInput}`
+    const username = Cookies.get('username')
+    const role = Cookies.get('role')
+    let apiUrl = ""
+    if (role === 'AC') {
+      apiUrl = `http://localhost:5000/jobs/account-manager/${username}`
+    } else if (role === 'HR') {
+      apiUrl = `http://localhost:5000/jobs/hr/${username}`
+    } else {
+      apiUrl = `http://localhost:5000/admin/get-jobs/all`
+    }
     const jwtToken = Cookies.get('jwt_token')
     const options = {
       method: 'GET',
@@ -163,19 +172,54 @@ const JobsSection = () => {
     }
     const response = await fetch(apiUrl, options)
     const data = await response.json()
+    console.log('api data', data)
     if (response.ok === true) {
-      const updatedData = data.jobs.map(eachItem => ({
-        id: eachItem.id,
-        companyLogoUrl: eachItem.company_logo_url,
-        employmentType: eachItem.employment_type,
-        jobDescription: eachItem.job_description,
-        location: eachItem.location,
-        packagePerAnnum: eachItem.package_per_annum,
-        rating: eachItem.rating,
-        title: eachItem.title,
-      }))
-      setJobsList(updatedData)
-      setApiStatus(apiStatusConstant.success)
+      if(data.error) {
+        setApiStatus(apiStatusConstant.failure)
+      } else {
+        const updatedData = data.map(eachItem => ({
+          id: eachItem.id,
+          companyLogoUrl: eachItem.company_logo_url,
+          category: eachItem.category,
+          compname: eachItem.company_name,
+          packagePerAnnum: eachItem.ctc,
+          employmentType: eachItem.employment_type,
+          jobDescription: eachItem.description,
+          location: eachItem.location,
+          role: eachItem.title,
+          workType: eachItem.work_type,
+          hiringNeed: eachItem.hiring_need,
+          hiringCommision: eachItem.commission,
+          postedBy: eachItem.posted_by,
+          status: eachItem.status,
+          createdAt: eachItem.created_at,
+        }))
+        console.log('updated data',updatedData)
+      /*
+        assigned_to
+        category
+        commission
+        company_name
+        created_at
+        ctc
+        description
+        employment_type
+        hiring_need
+        id
+        location
+        no_of_openings
+        posted_by
+        skills
+        status
+        title
+        updated_at
+        work_type
+
+      */
+
+        setJobsList(updatedData)
+        setApiStatus(apiStatusConstant.success)
+      }
     } else {
       setApiStatus(apiStatusConstant.failure)
     }
@@ -298,7 +342,7 @@ const JobsSection = () => {
               onKeyEnter={onKeyEnter}
               onClickButton={onClickButton}
             />
-            </div>
+        </div>
           
 
         
@@ -321,10 +365,8 @@ const JobsSection = () => {
               <BsSearch className="search-icon" />
             </button>
           </div> */}
-          {/* {renderAllSections()} */}
 
-
-          {renderJobsCards()}
+          {renderAllSections()}
         </div>
       </div>
     )

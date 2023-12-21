@@ -1,10 +1,11 @@
 const express = require('express');
-const addJobController = require('../controllers/AddJobController');
+const addJobController = require('../controllers/JobController');
 const authenticateToken = require('../middleware/authenticationMiddleware');
 
 const router = express.Router();
 
 router.post('/add/new', authenticateToken, addJobController.addJobDetials);
+router.get('/details/:jobId', authenticateToken, addJobController.getJobDetails);
 router.post('/assign', authenticateToken, addJobController.assignJobToHrByAccountManager);
 router.get('/account-manager/:username', authenticateToken, addJobController.getAccountManagerJobs);
 router.get('/hr/:username', authenticateToken, addJobController.getHRJobs);

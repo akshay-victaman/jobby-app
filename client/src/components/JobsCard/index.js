@@ -1,4 +1,3 @@
-import {AiFillStar} from 'react-icons/ai'
 import {TiLocation} from 'react-icons/ti'
 import {Link} from 'react-router-dom'
 import {BsFillBriefcaseFill} from 'react-icons/bs'
@@ -6,6 +5,7 @@ import './style.css'
 
 const JobsCard = props => {
   const {jobsItem} = props
+  
   const {
     id,
     companyLogoUrl,
@@ -19,6 +19,9 @@ const JobsCard = props => {
     workType,
     hiringCommision,
     hiringNeed,
+    postedBy,
+    status,
+    createdAt,
   } = jobsItem
   return (
     <Link to={`/jobs/${id}`} className="link-item">
@@ -42,7 +45,7 @@ const JobsCard = props => {
               <p className="job-location">{employmentType}</p>
             </div>
           </div>
-          <p className="job-salary">{packagePerAnnum}</p>
+          <p className="job-salary">{packagePerAnnum} LPA</p>
         </div>
         <hr className="jobs-line" />
         <p className="job-detials">Commission: {hiringCommision}</p>

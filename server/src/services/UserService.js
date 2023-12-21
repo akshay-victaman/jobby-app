@@ -45,7 +45,7 @@ const loginUser = async (user) => {
         const match = bcrypt.compareSync(password, dbUser[0].password);
         if (match) {
             const jwtToken = jwt.sign({username: dbUser[0].username}, 'jobbyApp');
-            return {username, jwtToken};
+            return {username, jwtToken, role: dbUser[0].role};
         } else {
             return {error: 'Invalid Password'};
         }
@@ -55,14 +55,14 @@ const loginUser = async (user) => {
 }
 
 const getAllAccountManagers = async () => {
-    const query = 'SELECT * FROM users WHERE role = ?';
-    const result = await db.query(query, ['ACCOUNT_MANAGER']);
+    const query = 'SELECT username, location, hiring_ctc, industry FROM users WHERE role = ?';
+    const result = await db.query(query, ['AC']);
     return result[0];
 }
 
 const getAllHRs = async () => {
-    const query = 'SELECT * FROM users WHERE role = ?';
-    const result = await db.query(query, ['admin']);
+    const query = 'SELECT username, location, hiring_ctc, industry FROM users WHERE role = ?';
+    const result = await db.query(query, ['HR']);
     return result[0];
 }
 

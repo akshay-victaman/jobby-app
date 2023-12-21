@@ -13,14 +13,29 @@ const addJobDetials = async (job) => {
     }
 }
 
+const getJobDetails = async (jobId) => {
+    const query = 'SELECT * FROM jobs WHERE id = ?';
+    const result = await db.query(query, [jobId]);
+    if (result[0].length > 0) {
+        return result[0][0];
+    } else {
+        return {error: 'Job not found'};
+    }
+}
+
 const assignJobToHrByAccountManager = async (jobAssignment) => {
     const {jobId, assignedTo, assignedBy} = jobAssignment;
+    const assingmentQuery = 'SELECT * FROM JobAssignments WHERE job_id = ? AND assigned_to = ?';
+    const assingmentResult = await db.query(assingmentQuery, [jobId, assignedTo]);
+    if (assingmentResult[0].length > 0) {
+        return {error: 'Job already assigned to HR'};
+    }
     const id = uuidv4();
     const query = 'INSERT INTO JobAssignments (id, job_id, assigned_to, assigned_by) VALUES (?, ?, ?, ?)';
     const result = await db.query(query, [id, jobId, assignedTo, assignedBy]);
     if (result[0].affectedRows > 0) {
         return {success: 'Job assigned successfully to HR'};
-    } else {         
+    } else {
         return {error: 'Job assignment failed'};
     }
 }
@@ -34,7 +49,7 @@ const getAccountManagerJobs = async (username) => {
 const getHRJobs = async (username) => {
     const query = `
     SELECT 
-        jobs.id as job_id,
+        jobs.id as id,
         company_name,
         title,
         category,
@@ -48,7 +63,8 @@ const getHRJobs = async (username) => {
         no_of_openings,
         status,
         hiring_need,
-        assigned_by
+        assigned_by as posted_by,
+        assigned_at as created_at
     FROM jobs 
     INNER JOIN JobAssignments ON 
     jobs.id = JobAssignments.job_id 
@@ -106,6 +122,7 @@ const updateCandidateOfferStatus = async (candidate) => {
 
 module.exports = {
     addJobDetials,
+    getJobDetails,
     assignJobToHrByAccountManager,
     getAccountManagerJobs,
     getHRJobs,
