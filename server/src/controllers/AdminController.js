@@ -2,7 +2,9 @@ const adminService = require('../services/AdminService');
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await adminService.getAllUsers();
+    const role = req.query.role;
+    const isBlocked = req.query.isBlocked;
+    const users = await adminService.getAllUsers(role, isBlocked);
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });

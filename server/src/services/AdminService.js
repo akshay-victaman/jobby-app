@@ -4,8 +4,8 @@ const db = require('../config/database');
 
 const jwt = require('jsonwebtoken');
 
-const getAllUsers = async () => {
-    const query = `SELECT * FROM users where role != 'ADMIN'`;
+const getAllUsers = async (role, isBlocked) => {
+    const query = `SELECT * FROM users where role != 'ADMIN' ${role !== 'null' ? `AND role = '${role}'` : ''} ${isBlocked !== 'null' ? `AND is_blocked = ${parseInt(isBlocked)}` : ''}`;
     const result = await db.query(query);
     return result[0];
 }

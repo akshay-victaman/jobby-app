@@ -45,7 +45,7 @@ const loginUser = async (user) => {
         const match = bcrypt.compareSync(password, dbUser[0].password);
         if (match) {
             const jwtToken = jwt.sign({username: dbUser[0].username}, 'jobbyApp');
-            return {username, jwtToken, role: dbUser[0].role};
+            return {username, jwtToken, role: dbUser[0].role, isBlocked: dbUser[0].is_blocked};
         } else {
             return {error: 'Invalid Password'};
         }
