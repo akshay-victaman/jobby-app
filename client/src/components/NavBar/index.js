@@ -1,5 +1,6 @@
-import {Link} from 'react-router-dom'
+import {Link, useHistory} from 'react-router-dom'
 import { useState } from 'react';
+import Cookies from 'js-cookie';
 import { RxHamburgerMenu, RxCross1 } from "react-icons/rx";
 import './style.css'
 
@@ -9,6 +10,15 @@ const NavBar = ({isLoggedIn}) => {
 
     const handleMenuClick = () => {
         setMenuOpen(!menuOpen)
+    }
+
+    const history = useHistory();
+
+    const onClickLogout = () => {
+        Cookies.remove('jwt_token');
+        Cookies.remove('role');
+        Cookies.remove('username')
+        history.replace('/');
     }
 
     return (
@@ -40,9 +50,7 @@ const NavBar = ({isLoggedIn}) => {
                         </Link>
                     </li>
                     <li className='nav-item'>
-                        <Link to={isLoggedIn ? '/' : '/signup'} className='nav-link'>
-                            <button type='button' className='signup-button'>{isLoggedIn ? 'Logout' : 'Apply for hiring partner'}</button>
-                        </Link>
+                            <button type='button' className='signup-button' onClick={onClickLogout}>{isLoggedIn ? 'Logout' : 'Apply for hiring partner'}</button>
                     </li>
                 </ul>
                 <button type='button' className='hamburger-menu'>

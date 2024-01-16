@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import {Oval} from 'react-loader-spinner'
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosCloseCircle } from "react-icons/io";
-import { useParams } from 'react-router-dom'
+import { useParams, Redirect } from 'react-router-dom'
 import Popup from 'reactjs-popup';
 import {TiLocation} from 'react-icons/ti'
 import {BsFillBriefcaseFill} from 'react-icons/bs'
@@ -20,7 +20,7 @@ const apiStatusConstant = {
   failure: 'FAILURE',
 }
 
-const JobDetails = () => {
+const JobDetailsPage = () => {
   const [jobDetails, setJobDetails] = useState({})
   const [apiStatus, setApiStatus] = useState(apiStatusConstant.initial)
   const [humarResources, setHumarResources] = useState([])
@@ -31,10 +31,13 @@ const JobDetails = () => {
   const [candidateEmail, setCandidateEmail] = useState('')
   const [candidatePhone, setCandidatePhone] = useState('')
   const [offerStatus, setOfferStatus] = useState('')
+  const [error, setError] = useState('')
+  const [candidateList, setCandidateList] = useState([])
 
   useEffect(() => {
     getJobDetails()
     fetchHumarResources()
+    getCandidates()
   }, [])
 
   useEffect(() => {
@@ -63,7 +66,6 @@ const JobDetails = () => {
       if(data.error) {
         setApiStatus(apiStatusConstant.failure)
       } else {
-
         const formattedData = {
           id: data.id,
           companyLogoUrl: data.company_logo_url,
@@ -83,6 +85,55 @@ const JobDetails = () => {
         }
         setJobDetails(formattedData)
         setApiStatus(apiStatusConstant.success)
+      }
+    } else {
+      setApiStatus(apiStatusConstant.failure)
+    }
+  }
+
+  const getCandidates = async () => {
+    const {id} = params
+    const jwtToken = Cookies.get('jwt_token')
+    const apiUrl = `http://localhost:5000/jobs/candidate/${id}`
+    const options = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    }
+    const response = await fetch(apiUrl, options)
+    const data = await response.json()
+    if (response.ok === true) {
+      if(data.error) {
+        setApiStatus(apiStatusConstant.failure)
+      } else {
+        const username = Cookies.get('username')
+        const role = Cookies.get('role')
+        if(role === 'HR') {
+          const filteredData = data.filter(eachItem => eachItem.applied_by === username)
+          const formattedData = filteredData.map(eachItem => ({
+            candidateId: eachItem.candidate_id,
+            candidateName: eachItem.name,
+            candidateEmail: eachItem.email,
+            candidatePhone: eachItem.phone,
+            offerStatus: eachItem.offer_status,
+            offeredDate: eachItem.offered_date,
+            appliedBy: eachItem.applied_by
+          }))
+          setCandidateList(formattedData)
+        } else {
+          const formattedData = data.map(eachItem => ({
+            candidateId: eachItem.candidate_id,
+            candidateName: eachItem.name,
+            candidateEmail: eachItem.email,
+            candidatePhone: eachItem.phone,
+            offerStatus: eachItem.offer_status,
+            offeredDate: eachItem.offered_date,
+            appliedBy: eachItem.applied_by
+          }))
+          setCandidateList(formattedData)
+        }
+        console.log(data)
       }
     } else {
       setApiStatus(apiStatusConstant.failure)
@@ -156,15 +207,123 @@ const JobDetails = () => {
     setOfferStatus(e.target.value)
   }
 
-  const postCandidateDetails = async () => {
-    /*
-      "candidateName": "santhosh",
-      "candidateEmail": "santhosh123@gmail.com",
-      "candidatePhone": "9874563210",
-      "jobId": "38993740-f3d8-4749-871f-9dab5dfafce7",
-      "username": "Akshay",
-      "offerStatus": "Pending"
-    */
+  const postCandidateDetails = async (close) => {
+    if(candidateName === '' || candidateEmail === '' || candidatePhone === '' || offerStatus === '') {
+      setError("All fields are mandatory")
+      return
+    }
+    setError("")
+    const username = Cookies.get('username')
+    const candidateData = {
+      candidateName,
+      candidateEmail,
+      candidatePhone,
+      jobId: jobDetails.id,
+      username,
+      offerStatus
+    }
+    const url = 'http://localhost:5000/jobs/candidate/add'
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Cookies.get('jwt_token')}`
+        },
+        body: JSON.stringify(candidateData)
+    }
+    const response = await fetch(url, options)
+    const data = await response.json()
+    if(response.ok === true) {
+        if(data.error) {
+            setError(data.error)
+        } else {
+            setCandidateList([...candidateList, candidateData])
+            setError("")
+            setCandidateName('')
+            setCandidateEmail('')
+            setCandidatePhone('')
+            setOfferStatus('')
+            close()
+        }
+    } else {
+        setError(data.error)
+    }
+  }
+
+  const handleCandidateStatusChange = (e) => {
+    setOfferStatus(e.target.value)
+  }
+
+  const updateCandidateStatus = async (candidateId, close) => {
+    if(offerStatus === '') {
+      setError("All fields are mandatory")
+      return
+    }
+    setError("")
+    const username = Cookies.get('username')
+    const candidateData = {
+      candidateId,
+      jobId: jobDetails.id,
+      username,
+      offerStatus
+    }
+    const url = 'http://localhost:5000/jobs/candidate/status/update'
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Cookies.get('jwt_token')}`
+        },
+        body: JSON.stringify(candidateData)
+    }
+    const response = await fetch(url, options)
+    const data = await response.json()
+    if(response.ok === true) {
+        if(data.error) {
+            setError(data.error)
+        } else {
+            setCandidateList(candidateList.map(eachItem => {
+              if(eachItem.candidateId === candidateId) {
+                return {
+                  ...eachItem,
+                  offerStatus
+                }
+              }
+              return eachItem
+            }))
+            setOfferStatus('')
+            close()
+        }
+    } else {
+        setError(data.error)
+    }
+  }
+
+  const handleArchieveJob = async (close) => {
+    const url = `http://localhost:5000/admin/archive-job/${jobDetails.id}`
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Cookies.get('jwt_token')}`
+        },
+    }
+    const response = await fetch(url, options)
+    const data = await response.json()
+    if(response.ok === true) {
+        if(data.error) {
+            alert(data.error)
+        } else {
+            setJobDetails({
+              ...jobDetails,
+              status: 'ARCHIVED'
+            })
+            alert(data.message)
+            close()
+        }
+    } else {
+        alert(data.error)
+    }
   }
 
   const renderLoader = () => (
@@ -214,14 +373,14 @@ const JobDetails = () => {
 
   const renderUploadCandidaete = (close) => (
     <div className="modal-form">
-        <label className="homepage-label">Candidate Name</label>
-        <input type="text" className="homepage-input" value={candidateName} onChange={handleCandidateNameChange} />
-        <label className="homepage-label">Candidate Email</label>
-        <input type="text" className="homepage-input" value={candidateEmail} onChange={handleCandidateEmailChange} />
-        <label className="homepage-label">Candidate Phone</label>
-        <input type="text" className="homepage-input" value={candidatePhone} onChange={handleCandidatePhoneChange} />
-        <label className="homepage-label">Offer Status</label>
-        <select className="homepage-input" value={offerStatus} onChange={handleOfferStatusChange}>
+        <label className="homepage-label" htmlFor='candidateName'>Candidate Name</label>
+        <input type="text" className="homepage-input" id='candidateName' value={candidateName} onChange={handleCandidateNameChange} />
+        <label className="homepage-label" htmlFor='candidateEmail'>Candidate Email</label>
+        <input type="text" className="homepage-input" id='candidateEmail' value={candidateEmail} onChange={handleCandidateEmailChange} />
+        <label className="homepage-label" htmlFor='candidatePhone'>Candidate Phone</label>
+        <input type="text" className="homepage-input" id='candidatePhone' value={candidatePhone} onChange={handleCandidatePhoneChange} />
+        <label className="homepage-label" htmlFor='offerStatus'>Offer Status</label>
+        <select className="homepage-input" id='offerStatus' value={offerStatus} onChange={handleOfferStatusChange}>
         <option value=''>Select Offer Status</option>
         <option value='Pending'>Pending</option>
         <option value='Accepted'>Accepted</option>
@@ -229,7 +388,34 @@ const JobDetails = () => {
         <option value='On-hold'>On-hold</option>
         <option value='ongoing'>Ongoing</option>
         </select>
-        <button className="login-button" onClick={() => {postCandidateDetails(); close()}}>Submit</button>
+        <button className="login-button" onClick={() => {postCandidateDetails(close)}}>Submit</button>
+        {error!=="" && <p className="error-message">*{error}</p>}
+    </div>
+  )
+
+  const renderUpdateStatus = (close, candidateId) => (
+    <div className="modal-form">
+        <label className="homepage-label" htmlFor='offerStatus'>Offer Status</label>
+        <select className="homepage-input" id='offerStatus' value={offerStatus} onChange={handleCandidateStatusChange}>
+          <option value=''>Select Offer Status</option>
+          <option value='Pending'>Pending</option>
+          <option value='Accepted'>Accepted</option>
+          <option value='Rejected'>Rejected</option>
+          <option value='On-hold'>On-hold</option>
+          <option value='ongoing'>Ongoing</option>
+        </select>
+        <button className="login-button" onClick={() => {updateCandidateStatus(candidateId, close)}}>Update Status</button>
+        {error!=="" && <p className="error-message">*{error}</p>}
+    </div>
+  )
+
+  const renderArchieveJob = close => (
+    <div className="modal-form">
+        <label className="homepage-label">Do you really want to archieve this job?</label>
+        <div className='achieve-button-con'>
+          <button className='job-details-upload-candidate-button' onClick={() => handleArchieveJob(close)}>YES</button>
+          <button className='job-details-upload-candidate-button archieve-cancel-btn' onClick={close}>NO</button>
+        </div>
     </div>
   )
 
@@ -304,10 +490,13 @@ const JobDetails = () => {
           </div>
           <p className="job-details-desc">{jobDescription}</p>
           <p className="job-details-posted-at">Posted {formattedDate}</p>
-          {
-            userType === 'HR' &&
+          { jobDetails.status === 'ARCHIVED' ? <p className="job-details-posted-at">This job is archived</p> 
+          :
+            (userType === 'HR' || userType === 'ADMIN') &&
             <Popup
-              trigger={<button className='job-details-upload-candidate-button'>Upload Candidate</button>}
+              trigger={<button className='job-details-upload-candidate-button'>
+                        {userType === 'HR' ? 'Upload Candidate' : 'Archieve Job'}
+                      </button>}
               modal
             >
               {close => (
@@ -315,16 +504,103 @@ const JobDetails = () => {
                   <button className="modal-close-button" onClick={close}>
                     &times;
                   </button>
-                  {renderUploadCandidaete(close)}
+                  {
+                    userType === 'ADMIN' ? renderArchieveJob(close) : renderUploadCandidaete(close)
+                  }
                 </div>
               )}
             </Popup>
           }
+          {/* <button className="job-details-upload-candidate-button">Archieve Job</button> */}
         </div>
-        
       </div>
     )
   }
+
+  const renderCandidates = () => (
+    // offeredDate: eachItem.offered_date
+      <div className="job-details-candidates-container">
+        <h1 className="job-details-candidates-heading">Candidates</h1>
+        <div className='table-container'>
+          <table className="job-details-candidates-table">
+              <tr className="job-details-candidates-table-heading">
+                <th className="job-details-candidates-table-heading-cell">
+                  Name
+                </th>
+                <th className="job-details-candidates-table-heading-cell">
+                  Email
+                </th>
+                <th className="job-details-candidates-table-heading-cell">
+                  Phone
+                </th>
+                <th className="job-details-candidates-table-heading-cell">
+                  Offer Status
+                </th>
+                {
+                  Cookies.get('role') !== 'HR' &&
+                  <th className="job-details-candidates-table-heading-cell">
+                    Shortlisted By
+                  </th>
+                }
+                
+                {
+                  Cookies.get('role') !== 'ADMIN' && (
+                    <th className="job-details-candidates-table-heading-cell">
+                      Update Status
+                    </th>
+                  )
+                }
+                
+              </tr>
+              
+              {
+                candidateList.length > 0 ? candidateList.map(eachItem => (
+                <tr className="job-details-candidates-table-row">
+                    <td className="job-details-candidates-table-cell">
+                      {eachItem.candidateName}
+                    </td>
+                    <td className="job-details-candidates-table-cell">
+                    {eachItem.candidateEmail}
+                    </td>
+                    <td className="job-details-candidates-table-cell">
+                    {eachItem.candidatePhone}
+                    </td>
+                    <td className="job-details-candidates-table-cell">
+                    {eachItem.offerStatus}
+                    </td>
+                    {
+                      Cookies.get('role') !== 'HR' &&
+                      <td className="job-details-candidates-table-cell">
+                      {eachItem.appliedBy}
+                      </td>
+                    }
+                    {
+                      Cookies.get('role') !== 'ADMIN' && (
+                    <td className="job-details-candidates-table-cell">
+                      <Popup
+                        trigger={<button className="job-details-upload-candidate-button update-button">Update</button>}
+                        modal
+                      >
+                        {close => (
+                          <div className="modal">
+                            <button className="modal-close-button" onClick={close}>
+                              &times;
+                            </button>
+                            {renderUpdateStatus(close, eachItem.candidateId)}
+                          </div>
+                        )}
+                      </Popup>
+                    </td>
+                    )}
+                  </tr>
+                ))
+                :
+                <p className='' style={{textAlign: 'center'}}>no records found!</p>
+              }
+          </table>
+        </div>
+      </div>
+    )
 
   const renderJobDetailsFailure = () => (
     <div className="jobs-details-failure-container">
@@ -362,12 +638,18 @@ const JobDetails = () => {
     }
   }
 
+    const role = Cookies.get('role')
+    if(role === 'BDE') {
+      return <Redirect to='/bde-portal' />
+    }
+
     return (
       <div>
         <NavBar isLoggedIn={true} />
         {renderSwitchCase()}
+        {renderCandidates()}
       </div>
     )
 }
 
-export default JobDetails
+export default JobDetailsPage

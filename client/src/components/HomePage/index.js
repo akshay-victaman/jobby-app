@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useHistory, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import NavBar from '../NavBar';
 import './style.css'
@@ -9,12 +10,30 @@ const HomePage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState("");
 
+    const history = useHistory();
+
     const handleUsernameChange = (e) => {
         setUsername(e.target.value)
     }
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value)
+    }
+
+    const onSubmitSuccess = (jwtToken, username, role) => {
+        Cookies.set('jwt_token', jwtToken, {expires: 30})
+        Cookies.set('username', username, {expires: 30})
+        Cookies.set('role', role, {expires: 30})
+        if(role === 'ADMIN') {
+            history.replace('/admin')
+            return
+        } else if(role === 'BDE') {
+            history.replace('/bde-portal')
+            return
+        } else if(role === 'AC' || role === 'HR') {
+            history.replace('/jobs')
+            return
+        }
     }
 
     const handleLogin = async (e) => {
@@ -40,14 +59,25 @@ const HomePage = () => {
         if(response.ok === true) {
             if(data.error) {
                 setError(data.error)
+            } else if(data.isBlocked === 1) {
+                setError("Your account has been blocked. Please contact the admin.")
             } else {
-                Cookies.set('jwt_token', data.jwtToken, {expires: 30})
-                Cookies.set('username', data.username, {expires: 30})
-                Cookies.set('role', data.role, {expires: 30})
+                onSubmitSuccess(data.jwtToken, data.username, data.role)
                 setError("")
             }
         } else {
             setError(data.error)
+        }
+    }
+
+    if(Cookies.get('jwt_token') !== undefined) {
+        const role = Cookies.get('role')
+        if(role === 'ADMIN') {
+            return <Redirect to='/admin' />
+        } else if(role === 'BDE') {
+            return <Redirect to='/bde-portal' />
+        } else if(role === 'AC' || role === 'HR') {
+            return <Redirect to='/jobs' />
         }
     }
 

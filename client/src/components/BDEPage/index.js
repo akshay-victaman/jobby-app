@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import {Oval} from 'react-loader-spinner'
+import {Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import NavBar from '../NavBar';
 import './style.css';
@@ -237,6 +238,12 @@ const BDEPage = () => {
             <button className='bde-form-btn-an' onClick={toggleJobForm}>Post Another Job</button>
         </div>
     )
+
+    const role = Cookies.get('role')
+
+    if(role !== 'BDE') {
+        return <Redirect to='/' />
+    }
 
     return (
         <div className='bde-container'>

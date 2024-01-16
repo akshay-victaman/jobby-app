@@ -13,12 +13,12 @@ POST http://localhost:5000/api/users/register
 Content-Type: application/json
 
 {
-    "username": "Nahed",
-    "password": "nahed123",
-    "email": "nahed@gmail.com",
-    "role": "AC",
-    "location": "Warangal",
-    "hiringCtc": 13,
+    "username": "likki",
+    "password": "likki123",
+    "email": "likki@gmail.com",
+    "role": "BDE",
+    "location": "Mumbai",
+    "hiringCtc": 6,
     "industry": "IT"
 }
 

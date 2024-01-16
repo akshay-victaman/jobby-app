@@ -72,11 +72,26 @@ const JobsSection = () => {
     const [searchInput, setSearchInput] = useState('')
     const [apiStatus, setApiStatus] = useState(apiStatusConstant.initial)
     const [toggleFilter, setToggleFilter] = useState(false)
+    const [archieve, setArchieve] = useState(false)
 
 
   useEffect(() => {
     getJobsCard()
     }, [employmentTypeList, minimumPackageList])
+
+  const archieveJobs = () => {
+    console.log(archieve)
+    if(archieve) {
+      setJobsList(jobsList.filter(eachJob => eachJob.status === 'ARCHIVED'))
+    } else {
+      getJobsCard()
+    }
+  }
+
+  const onSelectArchieve = async () => {
+    await setArchieve(!archieve, archieveJobs())
+    // archieveJobs()
+  }
 
   const onSelectEmploymentType = event => {
     if (employmentTypeList.includes(event.target.value)) {
@@ -333,6 +348,8 @@ const JobsSection = () => {
         } */}
         <div className="jobs-section-profile-filter-con">
               <FilterJobs
+              onSelectArchieve={onSelectArchieve}
+              archieve={archieve}
               onSelectEmploymentType={onSelectEmploymentType}
               onChangeSalaryRange={onChangeSalaryRange}
               onSelectIndustryType={onSelectIndustryType}
