@@ -25,7 +25,7 @@ const NavBar = ({isLoggedIn}) => {
         <>
             <nav className="navbar">
                 <Link to='/'>
-                    <img src="/victaman-logo.png" alt="website logo" className='nav-logo'/>
+                    <img src="/early-jobs-logo2.png" alt="website logo" className='nav-logo'/>
                 </Link>
                 <ul className='nav-list'>
 
@@ -50,7 +50,9 @@ const NavBar = ({isLoggedIn}) => {
                         </Link>
                     </li>
                     <li className='nav-item'>
-                            <button type='button' className='signup-button' onClick={onClickLogout}>{isLoggedIn ? 'Logout' : 'Apply for hiring partner'}</button>
+                        <Link to='/apply-as-a-hiring-partner' className='nav-link'>
+                            <button type='button' className='signup-button' onClick={onClickLogout}>{isLoggedIn ? 'Logout' : 'Apply as a hiring partner'}</button>
+                        </Link>
                     </li>
                 </ul>
                 <button type='button' className='hamburger-menu'>
@@ -93,8 +95,8 @@ const NavBar = ({isLoggedIn}) => {
                             </Link>
                         </li>
                         <li className='nav-item-mobile'>
-                            <Link to={isLoggedIn ? '/' : '/signup'} className='nav-link'>
-                                <button type='button' className='signup-button'>{isLoggedIn ? 'Logout' : 'Apply for hiring partner'}</button>
+                            <Link to={isLoggedIn ? '/' : '/apply-as-a-hiring-partner'} className='nav-link'>
+                                <button type='button' className='signup-button'>{isLoggedIn ? 'Logout' : 'Apply as a hiring partner'}</button>
                             </Link>
                         </li>
                     </ul>

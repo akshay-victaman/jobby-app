@@ -26,7 +26,7 @@
     padding: 20px 15px;
     flex-direction: column;
     border-radius: 10px;
-    border: 1px solid #f9a828;
+    border: 1px solid #EB6A4D;
 }
 
 .homepage-img {
@@ -52,7 +52,7 @@
 .homepage-input {
     height: 35px;
     border-radius: 5px;
-    border: 1px solid #f9a828;
+    border: 1px solid #EB6A4D;
     width: 100%;
     margin-bottom: 16px;
     padding-left: 12px;
@@ -61,7 +61,8 @@
 }
 
 .login-button {
-    background-color: #f9a828;
+    /* background-color: #f9a828; */
+    background-color: #EB6A4D;
     color: #ffffff;
     border: none;
     border-radius: 5px;
@@ -86,6 +87,7 @@
         flex-direction: column;
         margin-top: 10vh;
         justify-content: center;
+        min-height: 90vh;
     }
 
     .homepage-card {

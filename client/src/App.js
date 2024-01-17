@@ -10,11 +10,13 @@ import UsersPage from './components/UsersPage';
 import CandidatesPage from './components/CandidatesPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import JobDetailsPage from './components/JobDetailsPage';
+import HiringPartnerForm from './components/HiringPartnerForm';
 
 
 const App = () => (
   <Switch>
     <Route exact path="/" component={HomePage} />
+    <Route exact path="/apply-as-a-hiring-partner" component={HiringPartnerForm} />
     <ProtectedRoute exact path="/jobs" component={JobsPage} />
     <ProtectedRoute exact path="/jobs/:id" component={JobDetailsPage} />
     <ProtectedRoute exact path='/signup' component={SignUpPage} />

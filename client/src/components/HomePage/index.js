@@ -3,6 +3,7 @@ import { useHistory, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import NavBar from '../NavBar';
 import './style.css'
+import Footer from '../Footer';
 
 const HomePage = () => {
 
@@ -98,6 +99,7 @@ const HomePage = () => {
                 </div>
                 <img src='/homepage-bg.avif' className='homepage-img' alt='homepage-img'/>
             </div>
+            <Footer />
         </div>
     )
 }
