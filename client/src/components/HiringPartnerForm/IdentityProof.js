@@ -1,3 +1,5 @@
+import {Oval} from 'react-loader-spinner'
+
 const IdentityProofForm = (props) => {
     const { 
         handleIdentityProofInputChange,
@@ -11,13 +13,33 @@ const IdentityProofForm = (props) => {
         handlePanBackChange, 
         handlePhotoChange, 
         handleCurrentStep, 
-        onSubmitIdentityProof 
+        onSubmitIdentityProof,
+        loading
     } = props;
     return(
         <div className='hr-form-container'>
             <h1 className='form-title'>Idenetification</h1>
             <form onSubmit={onSubmitIdentityProof} className='hr-form'>
                 <p className='hr-form-subtitle'>Identity Proof(This is 'optional' section you can update once your profile is approved)</p>
+                <button type='submit' className='hr-form-btn skip-button' disabled={loading}>
+                    {loading &&
+                        <span className='hr-oval'>
+                            <Oval
+                                visible={true}
+                                height="20"
+                                width="20"
+                                color="#ffffff"
+                                strokeWidth="4"
+                                ariaLabel="oval-loading"
+                                wrapperStyle={{}}
+                                secondaryColor="#ffffff"
+                                wrapperClass=""
+                                className='hr-oval'
+                            />
+                        </span>
+                    }
+                    Skip & Submit
+                </button>
 
                 <label htmlFor='aadhar' className='hr-label'>Aadhar Number</label>
                 <input type='number' placeholder="Ex: 123456789012" className='hr-input' id='aadhar' value={identityProof.aadharNumber} onChange={handleIdentityProofInputChange} name='aadharNumber' />
@@ -137,7 +159,25 @@ const IdentityProofForm = (props) => {
 
                 <div className='hr-submit-con'>
                     <button type='button' className='hr-form-btn' onClick={() => handleCurrentStep(3)}>Back</button>
-                    <button type='submit' className='hr-form-btn'>Submit</button>
+                    <button type='submit' className='hr-form-btn' disabled={loading} >
+                    {loading &&
+                        <span className='hr-oval'>
+                            <Oval
+                                visible={true}
+                                height="20"
+                                width="20"
+                                color="#ffffff"
+                                strokeWidth="4"
+                                ariaLabel="oval-loading"
+                                wrapperStyle={{}}
+                                secondaryColor="#ffffff"
+                                wrapperClass=""
+                                className='hr-oval'
+                            />
+                        </span>
+                    }
+                        Skip & Submit
+                    </button>
                 </div>
             </form>
         </div>

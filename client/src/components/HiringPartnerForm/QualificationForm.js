@@ -36,7 +36,7 @@ const QualificationForm = (props) => {
                 <div className='hr-input-list-con'>
                     {
                         qualification.certification.map((certification) => (
-                            <div className='hr-input-list'>
+                            <div className='hr-input-list' key={certification.id}>
                                 <p className='hr-input-list-item'>{certification.value}</p>
                                 <button type='button' className='hr-remove-item-button' onClick={() => handleCertificationRemove(certification.id)}><IoIosClose className='hr-close-icon' /></button>
                             </div>
@@ -52,7 +52,7 @@ const QualificationForm = (props) => {
                 <div className='hr-input-list-con'>
                     {
                         qualification.workExperience.map((experience) => (
-                            <div className='hr-input-list'>
+                            <div className='hr-input-list' key={experience.id}>
                                 <p className='hr-input-list-item'>{experience.value}</p>
                                 <button type='button' className='hr-remove-item-button' onClick={() => handleWorkExperienceRemove(experience.id)}><IoIosClose className='hr-close-icon' /></button>
                             </div>

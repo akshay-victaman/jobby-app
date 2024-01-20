@@ -79,7 +79,7 @@ const PersonalDetailsForm = (props) => {
                 <div className='hr-input-list-con'>
                     {
                         personalDetails.languages.map((language) => (
-                            <div className='hr-input-list'>
+                            <div className='hr-input-list' key={language.id}>
                                 <p className='hr-input-list-item'>{language.value}</p>
                                 <button type='button' className='hr-remove-item-button' onClick={() => handleLanguageRemove(language.id)}><IoIosClose className='hr-close-icon' /></button>
                             </div>

@@ -1,13 +1,18 @@
 import Stepper from 'react-stepper-horizontal';
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import {v4 as uuidv4} from 'uuid';
 import { useEffect, useState } from 'react';
+import { FaArrowUp } from "react-icons/fa6";
 import NavBar from '../NavBar'
 import IdentityProofForm from './IdentityProof';
 import PersonalDetailsForm from './PersonalDetails';
 import QualificationForm from './QualificationForm';
 import AboutForm from './AboutForm';
 import ReferencesForm from './ReferencesForm';
+import app from '../../firebase';
 import './style.css'
+import Footer from '../Footer';
 
 const customStyles = {
     control: (provided, state) => ({
@@ -95,6 +100,8 @@ const HiringPartnerForm = () => {
     ]
 
     const [currentStep, setCurrentStep] = useState(0)
+    const [isVisible, setIsVisible] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [certification, setCertification] = useState("")
     const [workExperience, setWorkExperience] = useState("")
     const [languages, setLanguages] = useState("")
@@ -191,7 +198,28 @@ const HiringPartnerForm = () => {
 
     const handleResize = () => {
         setWindowWidth(window.innerWidth);
-      };
+    };
+
+    const toggleVisibility = () => {
+        if (window.scrollY > 100) {
+        //   console.log(window.innerHeight)
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+    };
+
+    const scrollToTop = () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+    };
+
+    useEffect(() => {
+        window.addEventListener("scroll", toggleVisibility);
+        return () => window.removeEventListener("scroll", toggleVisibility);
+    }, []);
     
     useEffect(() => {
         window.addEventListener('resize', handleResize);
@@ -497,13 +525,18 @@ const HiringPartnerForm = () => {
 
     const onSubmitReferences = (e) => {
         e.preventDefault()
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(references.person1.name.trim().length === 0) {
             setError("*Please enter person 1 name")
             return
         } else if(references.person1.phone.trim().length < 10 || references.person1.phone.trim().length > 10) {
             setError("*Please enter valid person 1 phone number")
             return
-        } else if(references.person1.organization.trim().length === 0) {
+        } else if(emailRegex.test(references.person1.email) === false) {
+            setError("*Please enter valid person 1 email address")
+            return
+        }
+         else if(references.person1.organization.trim().length === 0) {
             setError("*Please enter person 1 organization")
             return
         } else if(references.person1.designation.trim().length === 0) {
@@ -517,6 +550,9 @@ const HiringPartnerForm = () => {
             return
         } else if(references.person2.phone.trim().length < 10 || references.person2.phone.trim().length > 10) {
             setError("*Please enter valid person 2 phone number")
+            return
+        } else if(emailRegex.test(references.person2.email) === false) {
+            setError("*Please enter valid person 2 email address")
             return
         } else if(references.person2.organization.trim().length === 0) {
             setError("*Please enter person 2 organization")
@@ -532,6 +568,9 @@ const HiringPartnerForm = () => {
             return
         } else if(references.person3.phone.trim().length < 10 || references.person3.phone.trim().length > 10) {
             setError("*Please enter valid person 3 phone number")
+            return
+        } else if(emailRegex.test(references.person3.email) === false) {
+            setError("*Please enter valid person 2 email address")
             return
         } else if(references.person3.organization.trim().length === 0) {
             setError("*Please enter person 3 organization")
@@ -549,31 +588,89 @@ const HiringPartnerForm = () => {
         handleCurrentStep(4)
     }
 
+    const uploadImage = async (file) => {
+        const storage = getStorage(app);
+        const storageRef = ref(storage, 'HiringPartnerImages/' + file.name + uuidv4());
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        let imageURL = "";
+      
+        // Create a new promise to handle the upload task
+        const promise = new Promise((resolve, reject) => {
+          uploadTask.on('state_changed', 
+            (snapshot) => {
+              var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log('Upload is ' + progress + '% done');
+            }, 
+            (error) => {
+              console.log(error);
+              reject(error);
+            },
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              console.log('File available at', downloadURL);
+              imageURL = downloadURL;
+              resolve(imageURL);
+            }
+          );
+        });
+      
+        // Wait for the promise to resolve, then return the result
+        return await promise;
+    };
+
+    const onSubmitToFirestore = async (formData) => {
+        console.log(formData)
+        const db = getFirestore(app);
+        const docRef = await addDoc(collection(db, "HiringPartnerRequests"), { formData });
+        console.log(docRef)
+        if(docRef) {
+            handleCurrentStep(5)
+        }
+        setLoading(false)
+    }
+
     const onSubmitIdentityProof = async (e) => {
         e.preventDefault()
-        console.log(identityProof)
+
+        console.log('triggered')
+
+        setLoading(true)
+
+        const newIdentityProof = { ...identityProof };
+
+        if(identityProof.aadharFront !== "") {
+            const aadharFrontURL = await uploadImage(identityProof.aadharFront)
+            newIdentityProof.aadharFront = aadharFrontURL;
+        }
+        if(identityProof.aadharBack !== "") {
+            const aadharBackURL = await uploadImage(identityProof.aadharBack)
+            newIdentityProof.aadharBack = aadharBackURL;
+        }
+        if(identityProof.panFront !== "") {
+            const panFrontURL = await uploadImage(identityProof.panFront)
+            newIdentityProof.panFront = panFrontURL;
+        }
+        if(identityProof.panBack !== "") {
+            const panBackURL = await uploadImage(identityProof.panBack)
+            newIdentityProof.panBack = panBackURL;
+        }
+        if(identityProof.photo !== "") {
+            const photoURL = await uploadImage(identityProof.photo)
+            newIdentityProof.photo = photoURL;
+        }
+
+        setIdentityProof(newIdentityProof); // update the state
+
         const formData = {
             personalDetails,
             qualification,
             about,
             references,
-            identityProof
+            newIdentityProof
         }
 
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData),
-        }
         
-        // const response = await fetch('https://earlyjobs-78b96-default-rtdb.firebaseio.com/HiringPartnerRequests.json', options)
-        // const data = await response.json()
-        // if(data.name !== undefined) {
-        //     console.log(data)
-        //     handleCurrentStep(5)
-        // }
+        onSubmitToFirestore(formData)
     }
 
 
@@ -644,7 +741,8 @@ const HiringPartnerForm = () => {
                                 handlePanBackChange={handlePanBackChange}
                                 handlePhotoChange={handlePhotoChange}
                                 handleCurrentStep={handleCurrentStep}
-                                onSubmitIdentityProof={onSubmitIdentityProof} 
+                                onSubmitIdentityProof={onSubmitIdentityProof}
+                                loading={loading}
                             />;
             case 5: return renderSuccess();
             default: return null;
@@ -670,6 +768,13 @@ const HiringPartnerForm = () => {
                     />
                 </div>
                 {renderAllSections()}
+                <Footer />
+                {
+                    isVisible && 
+                    <div className='hiring-partner-go-to-top' onClick={scrollToTop}>
+                        <FaArrowUp className='hiring-partner-go-to-top-icon' />
+                    </div>
+                }
             </div>
         </div>
     )

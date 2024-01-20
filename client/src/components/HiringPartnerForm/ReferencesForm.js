@@ -24,7 +24,7 @@ const ReferencesForm = (props) => {
                 <input type='text' placeholder="Ex: John Doe" className='hr-input' id='name' required value={references.person1.name} onChange={handlePerson1InputChange} name='name' />
 
                 <label htmlFor='phone-number' className='hr-label'>Contact Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' placeholder="Ex: 9876543210" className='hr-input' id='phone-number' required value={references.person1.phone} onChange={handlePerson1InputChange} name='phone' />
+                <input type='number' placeholder="Ex: 9876543210" className='hr-input' id='phone-number' required value={references.person1.phone} onChange={handlePerson1InputChange} name='phone' />
 
                 <label htmlFor='email' className='hr-label'>Mail ID<span className='hr-form-span'> *</span></label>
                 <input type='email' placeholder="Ex: johndoe@gmail.com" className='hr-input' id='email' required value={references.person1.email} onChange={handlePerson1InputChange} name='email' />
@@ -45,7 +45,7 @@ const ReferencesForm = (props) => {
                 <input type='text' placeholder="Ex: John Doe" className='hr-input' id='name2' required value={references.person2.name} onChange={handlePerson2InputChange} name='name' />
 
                 <label htmlFor='phone-number2' className='hr-label'>Contact Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' placeholder="Ex: 9876543210" className='hr-input' id='phone-number2' required value={references.person2.phone} onChange={handlePerson2InputChange} name='phone' />
+                <input type='number' placeholder="Ex: 9876543210" className='hr-input' id='phone-number2' required value={references.person2.phone} onChange={handlePerson2InputChange} name='phone' />
 
                 <label htmlFor='email2' className='hr-label'>Mail ID<span className='hr-form-span'> *</span></label>
                 <input type='email' placeholder="Ex: johndoe@gmail.com" className='hr-input' id='email2' required value={references.person2.email} onChange={handlePerson2InputChange} name='email' />
@@ -66,7 +66,7 @@ const ReferencesForm = (props) => {
                 <input type='text' placeholder="Ex: John Doe" className='hr-input' id='name3' required value={references.person3.name} onChange={handlePerson3InputChange} name='name' />
 
                 <label htmlFor='phone-number3' className='hr-label'>Contact Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' placeholder="Ex: 9876543210" className='hr-input' id='phone-number3' required value={references.person3.phone} onChange={handlePerson3InputChange} name='phone' />
+                <input type='number' placeholder="Ex: 9876543210" className='hr-input' id='phone-number3' required value={references.person3.phone} onChange={handlePerson3InputChange} name='phone' />
 
                 <label htmlFor='email3' className='hr-label'>Mail ID<span className='hr-form-span'> *</span></label>
                 <input type='email' placeholder="Ex: johndoe@gmail.com" className='hr-input' id='email3' required value={references.person3.email} onChange={handlePerson3InputChange} name='email' />
