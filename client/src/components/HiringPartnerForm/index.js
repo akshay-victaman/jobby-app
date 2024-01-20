@@ -4,6 +4,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import {v4 as uuidv4} from 'uuid';
 import { useEffect, useState } from 'react';
 import { FaArrowUp } from "react-icons/fa6";
+import emailjs from '@emailjs/browser';
 import NavBar from '../NavBar'
 import IdentityProofForm from './IdentityProof';
 import PersonalDetailsForm from './PersonalDetails';
@@ -618,12 +619,23 @@ const HiringPartnerForm = () => {
         return await promise;
     };
 
+    const sendEmail = (formData) => {
+        emailjs.send('service_fnv4y5p', 'template_op0us5b', formData, 'KzUehMbovr5UfqKRr')
+        .then((result) => {
+            console.log(result.text);
+        }, (error) => {
+            console.log(error.text);
+        });
+    };
+    
+
     const onSubmitToFirestore = async (formData) => {
         console.log(formData)
         const db = getFirestore(app);
         const docRef = await addDoc(collection(db, "HiringPartnerRequests"), { formData });
         console.log(docRef)
         if(docRef) {
+            sendEmail(formData)
             handleCurrentStep(5)
         }
         setLoading(false)

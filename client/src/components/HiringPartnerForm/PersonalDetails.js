@@ -49,7 +49,7 @@ const PersonalDetailsForm = (props) => {
                         options={countryOptions}
                         defaultValue={{ value: defaultSelectedValue, label: countryOptions[0].label }}
                         isSearchable={true}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                         styles={customStyles}
                     />
                     <input type='number' placeholder="Ex: 9876543210" onChange={handleInputChange} value={personalDetails.phone} required className='hr-input-select' id='phone-number' name='phone' />
@@ -61,7 +61,7 @@ const PersonalDetailsForm = (props) => {
                         options={countryOptions}
                         defaultValue={{ value: defaultSelectedValue, label: countryOptions[0].label }}
                         isSearchable={true}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                         styles={customStyles}
                     />
                     <input type='number' placeholder="Ex: 9876543210" onChange={handleInputChange} value={personalDetails.wtspNum} required className='hr-input-select' id='whatsapp-number' name='wtspNum' />
