@@ -1,9 +1,49 @@
 import Stepper from 'react-stepper-horizontal';
-import { IoIosClose } from "react-icons/io";
 import {v4 as uuidv4} from 'uuid';
+import { useEffect, useState } from 'react';
 import NavBar from '../NavBar'
+import IdentityProofForm from './IdentityProof';
+import PersonalDetailsForm from './PersonalDetails';
+import QualificationForm from './QualificationForm';
+import AboutForm from './AboutForm';
+import ReferencesForm from './ReferencesForm';
 import './style.css'
-import { useState } from 'react';
+
+const customStyles = {
+    control: (provided, state) => ({
+        ...provided,
+        border: '1px solid #EB6A4D',
+        borderRadius: '5px',
+        borderTopRightRadius: '0px',
+        borderBottomRightRadius: '0px',
+        borderLeft: '1px',
+        boxShadow: null,
+        '&:hover': {
+            borderColor: '#EB6A4D',
+        },
+        width: '70px',
+        height: '35px',
+        minHeight: '35px',
+        fontSize: '14px',
+    }),
+    dropdownIndicator: (provided) => ({
+        ...provided,
+        color: '#EB6A4D',
+        '&:hover': {
+            color: '#EB6A4D',
+        },
+        width: '15px',
+        padding: '0px',
+        margin: '0px',
+        border: '0px',
+    }),
+    option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isSelected ? '#EB6A4D' : null,
+        color: state.isSelected ? 'white' : 'black',
+    }),
+};
+
 
 const HiringPartnerForm = () => {
     const steps = [
@@ -21,12 +61,45 @@ const HiringPartnerForm = () => {
         },
         {
             title: 'Idenetification'
+        },
+        {
+            title: 'Submit'
+        }
+    ]
+
+    const hiringDept = [
+        {
+            id: 1,
+            value: 'BPO'
+        },
+        {
+            id: 2,
+            value: 'IT'
+        },
+        {
+            id: 3,
+            value: 'Banking'
+        },
+        {
+            id: 4,
+            value: 'Insurance'
+        },
+        {
+            id: 5,
+            value: 'Industry'
+        },
+        {
+            id: 6,
+            value: 'Other'
         }
     ]
 
     const [currentStep, setCurrentStep] = useState(0)
     const [certification, setCertification] = useState("")
     const [workExperience, setWorkExperience] = useState("")
+    const [languages, setLanguages] = useState("")
+    const [error, setError] = useState("")
+    const [selectedOption, setSelectedOption] = useState("+91");
     const [personalDetails, setPersonalDetails ] = useState({
         fullName: "",
         dob: "",
@@ -35,58 +108,143 @@ const HiringPartnerForm = () => {
         email: "",
         currAddress: "",
         permAddress: "",
-        languages: ""
+        languages: []
     })
 
     const [qualification, setQualification] = useState({
         highestQualification: "",
-        schoolName: "",
         certification: [],
         workExperience: []
     })
+
+    const [about, setAbout] = useState({
+        aboutYou: "",
+        WhyJoinUs: "",
+        YourContribution: "",
+        hours: "",
+        hiringDept: [],
+        joiningDate: ""
+    })
+
+    const [references, setReferences] = useState({
+        person1: {
+            name: "",
+            phone: "",
+            email: "",
+            organization: "",
+            designation: "",
+            know: ""
+        },
+        person2: {
+            name: "",
+            phone: "",
+            email: "",
+            organization: "",
+            designation: "",
+            know: ""
+        },
+        person3: {
+            name: "",
+            phone: "",
+            email: "",
+            organization: "",
+            designation: "",
+            know: ""
+        }
+    })
+
+    const [identityProof, setIdentityProof] = useState({
+        aadharNumber: "",
+        aadharFront: "",
+        aadharBack: "",
+        panNumber: "",
+        panFront: "",
+        panBack: "",
+        photo: "",
+        emergencyNumber: "",
+        familyMembers: {
+            member1: {
+                name: "",
+                relationship: "",
+                organization: "",
+                age: "",
+                dependentOnYou1: ""
+            },
+            member2: {
+                name: "",
+                relationship: "",
+                organization: "",
+                age: "",
+                dependentOnYou2: ""
+            },
+            member3: {
+                name: "",
+                relationship: "",
+                organization: "",
+                age: "",
+                dependentOnYou3: ""
+            }
+        }
+    })
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    const handleResize = () => {
+        setWindowWidth(window.innerWidth);
+      };
+    
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+
+    const handleCountryCodeChange = (option) => {
+        setSelectedOption(option.value);
+    };
+
 
     const handleCurrentStep = (step) => {
         setCurrentStep(step)
     }
 
-    const handleFullnameChange = (event) => {
-        setPersonalDetails(prevState => ({...prevState, fullName: event.target.value}))
+
+    // Personal Details Events
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setPersonalDetails(prevState => ({ ...prevState, [name]: value}))
     }
 
-    const handleDobChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, dob: event.target.value}))
-    }
-
-    const handlePhoneChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, phone: event.target.value}))
-    }
-
-    const handleWtspNumChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, wtspNum: event.target.value}))
-    }
-
-    const handleEmailChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, email: event.target.value}))
-    }
-
-    const handleCurrAddressChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, currAddress: event.target.value}))
-    }
-
-    const handlePermAddressChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, permAddress: event.target.value}))
+    const onChangeLanguage = (event) => {
+        setLanguages(event.target.value)
     }
 
     const handleLanguageChange = (event) => {
-        setPersonalDetails(prevState => ({ ...prevState, languages: event.target.value}))
+        const trimmedLanguage = languages.trim()
+        if(trimmedLanguage === "") {
+            return
+        }
+        const language = {
+            id: uuidv4(),
+            value: trimmedLanguage
+        }
+        setPersonalDetails(prevState => ({ ...prevState, languages: [...prevState.languages, language]}))
+        setLanguages("")
     }
 
-    const handleHighestQualificationChange = (event) => {
-        setQualification(prevState => ({ ...prevState, highestQualification: event.target.value}))
+    const handleLanguageRemove = (id) => {
+        setPersonalDetails(prevState => ({ ...prevState, languages: prevState.languages.filter((language) => language.id !== id)}))
     }
 
-    const handleSchoolNameChange = (event) => {
-        setQualification(prevState => ({ ...prevState, schoolName: event.target.value}))
+    // Qualification Events
+
+    const handleQualificationInputChange = (event) => {
+        const { name, value } = event.target;
+        setQualification(prevState => ({ ...prevState, [name]: value}))
     }
 
     const onChangeCertification = (event) => {
@@ -94,9 +252,13 @@ const HiringPartnerForm = () => {
     }
 
     const handleCertificationChange = () => {
+        const trimmedCertification = certification.trim()
+        if(trimmedCertification === "") {
+            return
+        }
         const certificationDetails = {
             id: uuidv4(),
-            value: certification
+            value: trimmedCertification
         }
         setQualification(prevState => ({ ...prevState, certification: [...prevState.certification, certificationDetails]}))
         setCertification("")
@@ -108,12 +270,17 @@ const HiringPartnerForm = () => {
 
     const onChangeWorkExperience = (event) => {
         setWorkExperience(event.target.value)
+
     }
 
     const handleWorkExperienceChange = () => {
+        const trimmedWorkExperience = workExperience.trim()
+        if(trimmedWorkExperience === "") {
+            return
+        }
         const experience = {
             id: uuidv4(),
-            value: workExperience
+            value: trimmedWorkExperience
         }
         setQualification(prevState => ({ ...prevState, workExperience: [...prevState.workExperience, experience]}))
         setWorkExperience("")
@@ -123,383 +290,363 @@ const HiringPartnerForm = () => {
         setQualification(prevState => ({ ...prevState, workExperience: prevState.workExperience.filter((experience) => experience.id !== id)}))
     }
 
+    // About Events
+
+    const handleAboutInputChange = (event) => {
+        const { name, value } = event.target;
+        setAbout(prevState => ({ ...prevState, [name]: value}))
+    }
+
+    const handleHiringDeptChange = (event) => {
+        const isExists = about.hiringDept.includes(event.target.value)
+        if(isExists) {
+            setAbout(prevState => ({ ...prevState, hiringDept : prevState.hiringDept.filter((dept) => dept !== event.target.value)}))
+        } else {
+            setAbout(prevState => ({ ...prevState, hiringDept : [...prevState.hiringDept, event.target.value]}))
+        }
+    }
+
+    // Person 1, 2, 3 Events
+
+    const handlePerson1InputChange = (event) => {
+        const { name, value } = event.target;
+        setReferences(prevState => ({ ...prevState, person1: {...prevState.person1, [name]: value}}))
+    }
+
+    const handlePerson2InputChange = (event) => {
+        const { name, value } = event.target;
+        setReferences(prevState => ({ ...prevState, person2: {...prevState.person2, [name]: value}}))
+    }
+
+    const handlePerson3InputChange = (event) => {
+        const { name, value } = event.target;
+        setReferences(prevState => ({ ...prevState, person3: {...prevState.person3, [name]: value}}))
+    }
+
+    // Identity Proof Events
+
+    const handleIdentityProofInputChange = (event) => {
+        const { name, value } = event.target;
+        setIdentityProof(prevState => ({ ...prevState, [name]: value}))
+    }
+
+    const handleIdentityProofMember1InputChange = (event) => {
+        const { name, value } = event.target;
+        setIdentityProof(prevState => ({ ...prevState, familyMembers: {...prevState.familyMembers, member1: {...prevState.familyMembers.member1, [name]: value}}}))
+    }
+
+    const handleIdentityProofMember2InputChange = (event) => {
+        const { name, value } = event.target;
+        setIdentityProof(prevState => ({ ...prevState, familyMembers: {...prevState.familyMembers, member2: {...prevState.familyMembers.member2, [name]: value}}}))
+    }
+
+    const handleIdentityProofMember3InputChange = (event) => {
+        const { name, value } = event.target;
+        setIdentityProof(prevState => ({ ...prevState, familyMembers: {...prevState.familyMembers, member3: {...prevState.familyMembers.member3, [name]: value}}}))
+    }
+
+    const handleAadharFrontChange = (event) => {
+        if(!event.target.files[0]) {
+            return
+        }
+        if(event.target.files[0].size > 100000) {
+            alert('File size should be less than 100KB')
+            return
+        } else if(event.target.files[0].type !== 'image/jpeg' && event.target.files[0].type !== 'image/png') {
+            alert('File type should be jpeg or png')
+            return
+        }
+        setIdentityProof(prevState => ({ ...prevState, aadharFront : event.target.files[0]}))
+    }
+
+    const handleAadharBackChange = (event) => {
+        if(!event.target.files[0]) {
+            return
+        }
+        if(event.target.files[0].size > 100000) {
+            alert('File size should be less than 100KB')
+            return
+        } else if(event.target.files[0].type !== 'image/jpeg' && event.target.files[0].type !== 'image/png') {
+            alert('File type should be jpeg or png')
+            return
+        }
+        setIdentityProof(prevState => ({ ...prevState, aadharBack : event.target.files[0]}))
+    }
+
+    const handlePanFrontChange = (event) => {
+        if(!event.target.files[0]) {
+            return
+        }
+        if(event.target.files[0].size > 100000) {
+            alert('File size should be less than 100KB')
+            return
+        } else if(event.target.files[0].type !== 'image/jpeg' && event.target.files[0].type !== 'image/png') {
+            alert('File type should be jpeg or png')
+            return
+        }
+        setIdentityProof(prevState => ({ ...prevState, panFront : event.target.files[0]}))
+    }
+
+    const handlePanBackChange = (event) => {
+        if(!event.target.files[0]) {
+            return
+        }
+        if(event.target.files[0].size > 100000) {
+            alert('File size should be less than 100KB')
+            return
+        } else if(event.target.files[0].type !== 'image/jpeg' && event.target.files[0].type !== 'image/png') {
+            alert('File type should be jpeg or png')
+            return
+        }
+        setIdentityProof(prevState => ({ ...prevState, panBack : event.target.files[0]}))
+    }
+
+    const handlePhotoChange = (event) => {
+        if(!event.target.files[0]) {
+            return
+        }
+        if(event.target.files[0].size > 100000) {
+            alert('File size should be less than 100KB')
+            return
+        } else if(event.target.files[0].type !== 'image/jpeg' && event.target.files[0].type !== 'image/png') {
+            alert('File type should be jpeg or png')
+            return
+        }
+        setIdentityProof(prevState => ({ ...prevState, photo : event.target.files[0]}))
+    }
+
+
+    // Form Submit Events
+
     const onSubmitPersonalDetails = (e) => {
         e.preventDefault()
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(personalDetails.fullName.trim().length === 0) {
+            setError("*Please enter full name")
+            return
+        } else if(personalDetails.dob.trim().length === 0) {
+            setError("*Please select date of birth")
+            return
+        } else if(personalDetails.phone.trim().length < 10 || personalDetails.phone.trim().length > 10) {
+            setError("*Please enter valid phone number")
+            return
+        } else if(personalDetails.wtspNum.trim().length < 10 || personalDetails.wtspNum.trim().length > 10) {
+            setError("*Please enter whatsapp number")
+            return
+        } else if(emailRegex.test(personalDetails.email) === false) {
+            setError("*Please enter valid email address")
+            return
+        } else if(personalDetails.currAddress.trim().length === 0) {
+            setError("*Please enter current address")
+            return
+        } else if(personalDetails.permAddress.trim().length === 0) {
+            setError("*Please enter permanent address")
+            return
+        } else if(languages !== "" && personalDetails.languages.length === 0) {
+            setError("*Please enter languages you speak")
+            return
+        }
+
+        setError("")
         console.log(personalDetails)
+        
         handleCurrentStep(1)
     }
 
     const onSubmitQualification = (e) => {
         e.preventDefault()
+        if(certification !== "" && qualification.certification.length === 0) {
+            console.log('triggered')
+            setError("*Please enter certification")
+            return
+        } else if(workExperience !== "" && qualification.workExperience.length === 0) {
+            setError("*Please enter work experience")
+            return
+        }
+        setError("")
         console.log(qualification)
         handleCurrentStep(2)
     }
 
+    const onSubmitAbout = (e) => {
+        e.preventDefault()
+        console.log(about)
+        if(about.aboutYou.split(/\s+/).length < 150 || about.aboutYou.split(/\s+/).length > 200) {
+            setError("*Please enter 'about yourself' in 150-200 words")
+            return
+        } else if(about.WhyJoinUs.split(/\s+/).length < 100 || about.WhyJoinUs.split(/\s+/).length > 150) {
+            setError("*Please enter 'why you want to join us' in 100-150 words")
+            return
+        } else if(about.YourContribution.split(/\s+/).length < 100 || about.YourContribution.split(/\s+/).length > 150) {
+            setError("*Please enter 'how you can contribute to society' in 100-150 words")
+            return
+        } else if(about.hours.trim().length === 0) {
+            setError("*Please enter how many hours you can contribute daily")
+            return
+        } else if(about.joiningDate.trim().length === 0) {
+            setError("*Please enter how soon you can join")
+            return
+        } else if(about.hiringDept.length === 0) {
+            setError("*Please select hiring department")
+            return
+        }
+        setError("")
+        handleCurrentStep(3)
+    }
 
-    const renderPersonalDetails = () => (
-        <div className='hr-form-container'>
-            <h1 className='form-title'>Personal Details</h1>
-            <form onSubmit={onSubmitPersonalDetails} className='hr-form'>
-                <p className='hr-form-subtitle'>( <span className='hr-form-span'>*</span> ) Indicates required field</p>
+    const onSubmitReferences = (e) => {
+        e.preventDefault()
+        if(references.person1.name.trim().length === 0) {
+            setError("*Please enter person 1 name")
+            return
+        } else if(references.person1.phone.trim().length < 10 || references.person1.phone.trim().length > 10) {
+            setError("*Please enter valid person 1 phone number")
+            return
+        } else if(references.person1.organization.trim().length === 0) {
+            setError("*Please enter person 1 organization")
+            return
+        } else if(references.person1.designation.trim().length === 0) {
+            setError("*Please enter person 1 designation")
+            return
+        } else if(references.person1.know.trim().length === 0) {
+            setError("*Please enter how person 1 know you")
+            return
+        } else if(references.person2.name.trim().length === 0) {
+            setError("*Please enter person 2 name")
+            return
+        } else if(references.person2.phone.trim().length < 10 || references.person2.phone.trim().length > 10) {
+            setError("*Please enter valid person 2 phone number")
+            return
+        } else if(references.person2.organization.trim().length === 0) {
+            setError("*Please enter person 2 organization")
+            return
+        } else if(references.person2.designation.trim().length === 0) {
+            setError("*Please enter person 2 designation")
+            return
+        } else if(references.person2.know.trim().length === 0) {
+            setError("*Please enter how person 2 know you")
+            return
+        } else if(references.person3.name.trim().length === 0) {
+            setError("*Please enter person 3 name")
+            return
+        } else if(references.person3.phone.trim().length < 10 || references.person3.phone.trim().length > 10) {
+            setError("*Please enter valid person 3 phone number")
+            return
+        } else if(references.person3.organization.trim().length === 0) {
+            setError("*Please enter person 3 organization")
+            return
+        } else if(references.person3.designation.trim().length === 0) {
+            setError("*Please enter person 3 designation")
+            return
+        } else if(references.person3.know.trim().length === 0) {
+            setError("*Please enter how person 3 know you")
+            return
+        }
+        setError("")
 
-                <label htmlFor='fullname' className='hr-label'>Full Name<span className='hr-form-span'> *</span></label>
-                <input type='text' onChange={handleFullnameChange} value={personalDetails.fullName} required className='hr-input' id='fullname' name='fullname' />
+        console.log(references)
+        handleCurrentStep(4)
+    }
 
-                <label htmlFor='date-of-birth' className='hr-label'>Date of Birth<span className='hr-form-span'> *</span></label>
-                <input type='date' onChange={handleDobChange} value={personalDetails.dob} required className='hr-input' id='date-of-birth' name='date-of-birth' />
-                
-                <label htmlFor='phone-number' className='hr-label'>Phone Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' onChange={handlePhoneChange} value={personalDetails.phone} required className='hr-input' id='phone-number' name='phone-number' />
+    const onSubmitIdentityProof = async (e) => {
+        e.preventDefault()
+        console.log(identityProof)
+        const formData = {
+            personalDetails,
+            qualification,
+            about,
+            references,
+            identityProof
+        }
 
-                <label htmlFor='whatsapp-number' className='hr-label'>Whatsapp Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' onChange={handleWtspNumChange} value={personalDetails.wtspNum} required className='hr-input' id='whatsapp-number' name='whatsapp-number' />
-
-                <label htmlFor='email' className='hr-label'>Email<span className='hr-form-span'> *</span></label>
-                <input type='email' onChange={handleEmailChange} value={personalDetails.email} required className='hr-input' id='email' name='email' />
-                
-                <label htmlFor='current-address' className='hr-label'>Current Address<span className='hr-form-span'> *</span></label>
-                <input type='text' onChange={handleCurrAddressChange} value={personalDetails.currAddress} required className='hr-input' id='current-address' name='current-address' />
-
-                <label htmlFor='permanent-address' className='hr-label'>Permanent Address<span className='hr-form-span'> *</span></label>
-                <input type='text' onChange={handlePermAddressChange} value={personalDetails.permAddress} required className='hr-input' id='permanent-address' name='permanent-address' />
-                
-                <label htmlFor='languages' className='hr-label'>Languages you speak<span className='hr-form-span'> *</span></label>
-                <input type='text' onChange={handleLanguageChange} value={personalDetails.languages} required className='hr-input' id='languages' name='languages' />
-
-                <button type='submit' className='hr-form-btn'>Save & Next</button>
-            </form>
-        </div>
-    )
-
-    const renderQualification = () => (
-        <div className='hr-form-container'>
-            <h1 className='form-title'>Qualification/Certification</h1>
-            <form className='hr-form' onSubmit={onSubmitQualification}>
-                <p className='hr-form-subtitle'>( <span className='hr-form-span'>*</span> ) Indicates required field</p>
-
-                <label htmlFor='qualification' className='hr-label'>Highest Qualification<span className='hr-form-span'> *</span></label>
-                <select className='hr-input' id='qualification' name='qualification' required value={qualification.highestQualification} onChange={handleHighestQualificationChange}>
-                    <option value=''>Select</option>
-                    <option value='10th'>10th</option>
-                    <option value='12th/Intermediate'>12th</option>
-                    <option value='Graduation'>Graduation</option>
-                    <option value='Post Graduation'>Post Graduation</option>
-                    <option value='PhD'>PhD</option>
-                </select>
-
-                <label htmlFor='school-name' className='hr-label'>School Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='school-name' name='school-name' required value={qualification.schoolName} onChange={handleSchoolNameChange} />
-
-                <label htmlFor='certification' className='hr-label' >Certification<span className='hr-form-span'> *</span></label>
-                <div className='hr-input-list-con'>
-                    {
-                        qualification.certification.map((certification) => (
-                            <div className='hr-input-list'>
-                                <p className='hr-input-list-item'>{certification.value}</p>
-                                <button type='button' className='hr-remove-item-button' onClick={() => handleCertificationRemove(certification.id)}><IoIosClose className='hr-close-icon' /></button>
-                            </div>
-                        ))
-                    }
-                </div>
-                <div className='hr-input-con'>
-                    <input type='text' className='hr-input-sub' id='certification' name='certification' required={qualification.certification.length === 0} value={certification} onChange={onChangeCertification} />
-                    <button type='button' className='hr-form-btn-add' onClick={handleCertificationChange}>Add</button>
-                </div>
-                <button type='button' className='hr-form-btn-more'>+ Add More</button>
-
-                <label htmlFor='experience' className='hr-label' >Work Experience<span className='hr-form-span'> *</span></label>
-                <div className='hr-input-list-con'>
-                    {
-                        qualification.workExperience.map((experience) => (
-                            <div className='hr-input-list'>
-                                <p className='hr-input-list-item'>{experience.value}</p>
-                                <button type='button' className='hr-remove-item-button' onClick={() => handleWorkExperienceRemove(experience.id)}><IoIosClose className='hr-close-icon' /></button>
-                            </div>
-                        ))
-                    }
-                </div>
-                <div className='hr-input-con'>
-                    <input type='text' className='hr-input-sub' id='experience' name='experience' required={qualification.workExperience.length === 0} value={workExperience} onChange={onChangeWorkExperience} />
-                    <button type='button' className='hr-form-btn-add' onClick={handleWorkExperienceChange}>Add</button>
-                </div>
-                <button type='button' className='hr-form-btn-more'>+ Add More</button>
-
-                <div className='hr-submit-con'>
-                    <button type='button' className='hr-form-btn' onClick={() => handleCurrentStep(0)}>Back</button>
-                    <button type='submit' className='hr-form-btn'>Save & Next</button>
-                </div>
-            </form>
-        </div>
-    )
-
-    const renderAbout = () => (
-        <div className='hr-form-container'>
-            <h1 className='form-title'>About</h1>
-            <div className='hr-form'>
-                <p className='hr-form-subtitle'>( <span className='hr-form-span'>*</span> ) Indicates required field</p>
-
-                <label htmlFor='about' className='hr-label'>Tell us about yourself (150-200 words)<span className='hr-form-span'> *</span></label>
-                <textarea type='text' className='hr-textarea' id='about' name='about' placeholder='Minimum of 150 words' ></textarea>
-
-                <label htmlFor='joinus' className='hr-label'>Why you want to join us as HR Recruiter (100-150 Words)<span className='hr-form-span'> *</span></label>
-                <textarea type='text' className='hr-textarea' id='joinus' name='joinus' placeholder='Minimum of 100 words' ></textarea>
-
-                <label htmlFor='contribute' className='hr-label'>How you can contribute to society as a recruiter (100-150 words)<span className='hr-form-span'> *</span></label>
-                <textarea type='text' className='hr-textarea' id='contribute' name='contribute' placeholder='Minimum of 100 words' ></textarea>
-                
-                <label htmlFor='hours' className='hr-label'>How many hours you can contribute daily as a recruiter? (in Hours)<span className='hr-form-span'> *</span></label>
-                <input type='number' className='hr-input' id='hours' name='hours' />
-
-                <label htmlFor='hire' className='hr-label'>Which category you are interested to hire<span className='hr-form-span'> *</span></label>
-                <div className='hr-input-checkbox-con'>
-                    <div className='hr-checkbox-con'>
-                        <input type='checkbox' className='hr-checkbox' id='bpo' />
-                        <label className='hr-checkbox-label' htmlFor='bpo'>BPO</label>
-                    </div>
-                    <div className='hr-checkbox-con'>
-                        <input type='checkbox' className='hr-checkbox' id='it' />
-                        <label className='hr-checkbox-label' htmlFor='it'>IT</label>
-                    </div>
-                    <div className='hr-checkbox-con'>
-                        <input type='checkbox' className='hr-checkbox' id='banking' />
-                        <label className='hr-checkbox-label' htmlFor='banking'>Banking</label>
-                    </div>
-                    <div className='hr-checkbox-con'>
-                        <input type='checkbox' className='hr-checkbox' id='insurance' />
-                        <label className='hr-checkbox-label' htmlFor='insurance'>Insurance</label>
-                    </div>
-                    <div className='hr-checkbox-con'>
-                        <input type='checkbox' className='hr-checkbox' id='industry' />
-                        <label className='hr-checkbox-label' htmlFor='industry'>Industry</label>
-                    </div>
-                    <div className='hr-checkbox-con'>
-                        <input type='checkbox' className='hr-checkbox' id='other' />
-                        <label className='hr-checkbox-label' htmlFor='other'>Other</label>
-                    </div>
-                </div>
-                
-                <label htmlFor='joining' className='hr-label'>How soon you can join? (in Days)<span className='hr-form-span'> *</span></label>
-                <input type='number' className='hr-input' id='joining' name='joining' />
-
-                <div className='hr-submit-con'>
-                    <button className='hr-form-btn' onClick={() => handleCurrentStep(1)}>Back</button>
-                    <button className='hr-form-btn' onClick={() => handleCurrentStep(3)}>Save & Next</button>
-                </div>
-            </div>
-        </div>
-    )
-
-    const renderReferences = () => (
-        <div className='hr-form-container'>
-            <h1 className='form-title'>References</h1>
-            <div className='hr-form'>
-                <p className='hr-form-subtitle'>( <span className='hr-form-span'>*</span> ) Indicates required field</p>
-
-                <label className='hr-label'>List any three persons not related (Blood relation) to you, who are professionally, known to you.<span className='hr-form-span'> *</span></label>
-
-                <p className='person-label'>Person 1</p>
-
-                <label htmlFor='name' className='hr-label'>Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='name' name='name' />
-
-                <label htmlFor='phone-number' className='hr-label'>Contact Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='phone-number' name='phone-number' />
-
-                <label htmlFor='email' className='hr-label'>Mail ID<span className='hr-form-span'> *</span></label>
-                <input type='email' className='hr-input' id='email' name='email' />
-                
-                <label htmlFor='organization' className='hr-label'>Organization<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='organization' name='organization' />
-
-                <label htmlFor='designation' className='hr-label'>Designation<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='designation' name='designation' />
-                
-                <label htmlFor='know' className='hr-label'>How they know you?<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='know' name='know' />
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData),
+        }
+        
+        // const response = await fetch('https://earlyjobs-78b96-default-rtdb.firebaseio.com/HiringPartnerRequests.json', options)
+        // const data = await response.json()
+        // if(data.name !== undefined) {
+        //     console.log(data)
+        //     handleCurrentStep(5)
+        // }
+    }
 
 
-                <p className='person-label'>Person 2</p>
+    // Render Functions
 
-                <label htmlFor='name' className='hr-label'>Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='name' name='name' />
-
-                <label htmlFor='phone-number' className='hr-label'>Contact Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='phone-number' name='phone-number' />
-
-                <label htmlFor='email' className='hr-label'>Mail ID<span className='hr-form-span'> *</span></label>
-                <input type='email' className='hr-input' id='email' name='email' />
-                
-                <label htmlFor='organization' className='hr-label'>Organization<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='organization' name='organization' />
-
-                <label htmlFor='designation' className='hr-label'>Designation<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='designation' name='designation' />
-                
-                <label htmlFor='know' className='hr-label'>How they know you?<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='know' name='know' />
-
-
-                <p className='person-label'>Person 3</p>
-
-                <label htmlFor='name' className='hr-label'>Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='name' name='name' />
-
-                <label htmlFor='phone-number' className='hr-label'>Contact Number<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='phone-number' name='phone-number' />
-
-                <label htmlFor='email' className='hr-label'>Mail ID<span className='hr-form-span'> *</span></label>
-                <input type='email' className='hr-input' id='email' name='email' />
-                
-                <label htmlFor='organization' className='hr-label'>Organization<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='organization' name='organization' />
-
-                <label htmlFor='designation' className='hr-label'>Designation<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='designation' name='designation' />
-                
-                <label htmlFor='know' className='hr-label'>How they know you?<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='know' name='know' />
-
-                <div className='hr-submit-con'>
-                    <button className='hr-form-btn'  onClick={() => handleCurrentStep(2)}>Back</button>
-                    <button className='hr-form-btn'  onClick={() => handleCurrentStep(4)}>Save & Next</button>
-                </div>
-            </div>
-        </div>
-    )
-
-    const renderIdentityProof = () => (
-        <div className='hr-form-container'>
-            <h1 className='form-title'>Idenetification</h1>
-            <div className='hr-form'>
-                <p className='hr-form-subtitle'>( <span className='hr-form-span'>*</span> ) Indicates required field</p>
-
-                <label htmlFor='aadhar' className='hr-label'>Aadhar Number<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='aadhar' name='aadhar' />
-                <div className='aadhar-con'>
-                    <input type='file' id='aadhar-front' className='aadhar-input' />
-                    <label htmlFor='aadhar-front' className='aadhar-label'>FRONT</label>
-
-                    <input type='file' id='aadhar-back' className='aadhar-input' />
-                    <label htmlFor='aadhar-back' className='aadhar-label'>BACK</label>
-                </div>
-
-                <label htmlFor='pan' className='hr-label'>PAN Number<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='pan' name='pan' />
-                <div className='aadhar-con'>
-                    <input type='file' id='pan-front' className='aadhar-input' />
-                    <label htmlFor='pan-front' className='aadhar-label'>FRONT</label>
-
-                    <input type='file' id='pan-back' className='aadhar-input' />
-                    <label htmlFor='pan-back' className='aadhar-label'>BACK</label>
-                </div>
-
-                <label htmlFor='photo' className='hr-label'>Photo<span className='hr-form-span'> *</span></label>
-                <div className='aadhar-con'>
-                    <input type='file' id='photo' className='aadhar-input' />
-                    <label htmlFor='photo' className='aadhar-label'>PHOTO</label>
-                </div>
-                
-                <label htmlFor='emergency-number' className='hr-label'>Emergency Contact<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='emergency-number' name='emergency-number' />
-
-
-                <label className='hr-label'>Details of 3 Family Members.<span className='hr-form-span'> *</span></label>
-
-                <p className='person-label'>Member 1</p>
-
-                <label htmlFor='name' className='hr-label'>Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='name' name='name' />
-
-                <label htmlFor='relationship' className='hr-label'>Relationship<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='relationship' name='relationship' />
-                
-                <label htmlFor='organization' className='hr-label'>Occupation/Organization<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='organization' name='organization' />
-
-                <label htmlFor='age' className='hr-label'>Age<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='age' name='age' />
-                
-                <label htmlFor='know' className='hr-label'>Dependent on you?<span className='hr-form-span'> *</span></label>
-                <div className='hr-checkbox-con'>
-                    <label className='hr-checkbox-label'>
-                        <input type="radio" className='hr-checkbox' name="depend" value="yes" />
-                        Yes
-                    </label>
-                    <label className='hr-checkbox-label'>
-                        <input type="radio" className='hr-checkbox' name="depend" value="no" />
-                        No
-                    </label>
-                </div>
-
-
-                <p className='person-label'>Member 2</p>
-
-                <label htmlFor='name' className='hr-label'>Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='name' name='name' />
-
-                <label htmlFor='relationship' className='hr-label'>Relationship<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='relationship' name='relationship' />
-                
-                <label htmlFor='organization' className='hr-label'>Occupation/Organization<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='organization' name='organization' />
-
-                <label htmlFor='age' className='hr-label'>Age<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='age' name='age' />
-                
-                <label htmlFor='know' className='hr-label'>Dependent on you?<span className='hr-form-span'> *</span></label>
-                <div className='hr-checkbox-con'>
-                    <label className='hr-checkbox-label'>
-                        <input type="radio" className='hr-checkbox' name="depend" value="yes" />
-                        Yes
-                    </label>
-                    <label className='hr-checkbox-label'>
-                        <input type="radio" className='hr-checkbox' name="depend" value="no" />
-                        No
-                    </label>
-                </div>
-
-
-                <p className='person-label'>Member 3</p>
-
-                <label htmlFor='name' className='hr-label'>Name<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='name' name='name' />
-
-                <label htmlFor='relationship' className='hr-label'>Relationship<span className='hr-form-span'> *</span></label>
-                <input type='tel' className='hr-input' id='relationship' name='relationship' />
-                
-                <label htmlFor='organization' className='hr-label'>Occupation/Organization<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='organization' name='organization' />
-
-                <label htmlFor='age' className='hr-label'>Age<span className='hr-form-span'> *</span></label>
-                <input type='text' className='hr-input' id='age' name='age' />
-                
-                <label htmlFor='know' className='hr-label'>Dependent on you?<span className='hr-form-span'> *</span></label>
-                <div className='hr-checkbox-con'>
-                    <label className='hr-checkbox-label'>
-                        <input type="radio" className='hr-checkbox' name="depend" value="yes" />
-                        Yes
-                    </label>
-                    <label className='hr-checkbox-label'>
-                        <input type="radio" className='hr-checkbox' name="depend" value="no" />
-                        No
-                    </label>
-                </div>
-
-                <div className='hr-submit-con'>
-                    <button className='hr-form-btn' onClick={() => handleCurrentStep(3)}>Back</button>
-                    <button className='hr-form-btn' >Submit</button>
-                </div>
-            </div>
+    const renderSuccess = () => (
+        <div className='hr-form-container hr-success-container'>
+            <h1 className='form-title'>Thank You!</h1>
+            <p className='hr-form-subtitle hr-success'>Your profile has been submitted successfully. We will get back to you soon.</p>
         </div>
     )
 
     const renderAllSections = () => {
         switch(currentStep) {
-            case 0: return renderPersonalDetails();
-            case 1: return renderQualification();
-            case 2: return renderAbout();
-            case 3: return renderReferences();
-            case 4: return renderIdentityProof();
+            case 0: return <PersonalDetailsForm 
+                                handleInputChange={handleInputChange}
+                                languages={languages}
+                                onChangeLanguage={onChangeLanguage}
+                                personalDetails={personalDetails}
+                                handleLanguageChange={handleLanguageChange}
+                                handleLanguageRemove={handleLanguageRemove}
+                                handleCurrentStep={handleCurrentStep}
+                                onSubmitPersonalDetails={onSubmitPersonalDetails}
+                                error={error}
+                            />;
+            case 1: return <QualificationForm 
+                                handleQualificationInputChange={handleQualificationInputChange}
+                                certification={certification}
+                                workExperience={workExperience}
+                                qualification={qualification}
+                                onChangeCertification={onChangeCertification}
+                                onChangeWorkExperience={onChangeWorkExperience}
+                                handleCertificationChange={handleCertificationChange}
+                                handleCertificationRemove={handleCertificationRemove}
+                                handleWorkExperienceChange={handleWorkExperienceChange}
+                                handleWorkExperienceRemove={handleWorkExperienceRemove}
+                                handleCurrentStep={handleCurrentStep}
+                                onSubmitQualification={onSubmitQualification}
+                                error={error}
+                            />;
+            case 2: return <AboutForm 
+                                handleAboutInputChange={handleAboutInputChange}
+                                about={about}
+                                hiringDept={hiringDept}
+                                handleHiringDeptChange={handleHiringDeptChange}
+                                handleCurrentStep={handleCurrentStep}
+                                onSubmitAbout={onSubmitAbout}
+                                error={error}
+                            />;
+            case 3: return <ReferencesForm
+                                handlePerson1InputChange={handlePerson1InputChange}
+                                handlePerson2InputChange={handlePerson2InputChange}
+                                handlePerson3InputChange={handlePerson3InputChange}
+                                references={references}
+                                handleCurrentStep={handleCurrentStep}
+                                onSubmitReferences={onSubmitReferences}
+                                error={error}
+                            />;
+            case 4: return <IdentityProofForm 
+                                handleIdentityProofInputChange={handleIdentityProofInputChange}
+                                handleIdentityProofMember1InputChange={handleIdentityProofMember1InputChange}
+                                handleIdentityProofMember2InputChange={handleIdentityProofMember2InputChange}
+                                handleIdentityProofMember3InputChange={handleIdentityProofMember3InputChange}
+                                identityProof={identityProof}
+                                handleAadharFrontChange={handleAadharFrontChange}
+                                handleAadharBackChange={handleAadharBackChange}
+                                handlePanFrontChange={handlePanFrontChange}
+                                handlePanBackChange={handlePanBackChange}
+                                handlePhotoChange={handlePhotoChange}
+                                handleCurrentStep={handleCurrentStep}
+                                onSubmitIdentityProof={onSubmitIdentityProof} 
+                            />;
+            case 5: return renderSuccess();
             default: return null;
         }
     }
@@ -513,7 +660,9 @@ const HiringPartnerForm = () => {
                         activeColor="#EB6A4D" 
                         completeColor="#EB6A4D" 
                         activeTitleColor="#EB6A4D" 
-                        titleFontSize={10}
+                        titleFontSize={windowWidth < 768 ? 10 : 15}
+                        size={windowWidth < 768 ? 25 : 35}
+                        circleFontSize={windowWidth < 768 ? 12 : 16}
                         completeBorderColor="#EB6A4D" 
                         completeBarColor="#EB6A4D"
                         steps={ steps } 
@@ -526,4 +675,4 @@ const HiringPartnerForm = () => {
     )
 }
 
-export default HiringPartnerForm
+export { HiringPartnerForm, customStyles}

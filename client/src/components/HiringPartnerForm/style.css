@@ -35,6 +35,26 @@
     color: #EB6A4D;
 }
 
+.form-title {
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.hr-success {
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.hr-success-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    padding: 20px;
+}
+
 .hr-form-span {
     color: red;
 }
@@ -60,12 +80,13 @@
 .hr-textarea {
     border-radius: 5px;
     border: 1px solid #EB6A4D;
-    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
     margin-bottom: 16px;
     padding-left: 12px;
     font-size: 14px;
     outline: none;
-    height: 100px;
+    min-height: 100px;
     padding-top: 12px;
 }
 
@@ -88,6 +109,22 @@
     padding-left: 12px;
     height: 100%;
     border-radius: 5px;
+}
+
+.hr-input-select {
+    height: 100%;
+    border: 0px;
+    width: 100%;
+    border-radius: 4px;
+    padding-left: 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.phone-select {
+    display: flex;
+    align-items: center;
+    padding-left: 0px;
 }
 
 .hr-form-btn {
@@ -193,6 +230,7 @@
 
 .hr-checkbox {
     height: 15px;
+    cursor: pointer;
     width: 15px;
 }
 
@@ -202,6 +240,7 @@
     color: #3a3a3a;
     margin-left: 10px;
     display: flex;
+    cursor: pointer;
     align-items: center;
 }
 
@@ -239,9 +278,37 @@
     outline: none;
 }
 
+.hr-error {
+    color: red;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.hr-size {
+    font-size: 10px;
+    font-weight: 500;
+    margin-top: -12px;
+    margin-bottom: 10px;
+    color: #EB6A4D;
+}
+
 @media screen and (max-width: 768px) {
     .hr-form {
         width: 90%;
+    }
+    .form-title {
+        font-size: 22px;
+    }
+    .hr-success-container {
+        padding: 10px;
+    }
+    .hiring-partner-container {
+        margin-top: 10vh;
+    }
+    .hr-form-container {
+        margin-top: 15px;
     }
  }
 

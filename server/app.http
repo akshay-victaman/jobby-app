@@ -3,6 +3,10 @@ GET http://localhost:5000/api/users/
 
 ###
 
+GET https://job-backend-c3ah.onrender.com/
+
+###
+
 // Get user by username
 GET http://localhost:5000/api/users/AksHay
 

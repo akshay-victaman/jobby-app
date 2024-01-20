@@ -10,7 +10,7 @@ import UsersPage from './components/UsersPage';
 import CandidatesPage from './components/CandidatesPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import JobDetailsPage from './components/JobDetailsPage';
-import HiringPartnerForm from './components/HiringPartnerForm';
+import {HiringPartnerForm} from './components/HiringPartnerForm';
 
 
 const App = () => (
