@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { RxHamburgerMenu, RxCross1 } from "react-icons/rx";
 import './style.css'
+import Footer from '../Footer';
 
 const NavBar = ({isLoggedIn}) => {
 
@@ -45,7 +46,7 @@ const NavBar = ({isLoggedIn}) => {
                     }
 
                     <li className='nav-item'>
-                        <Link to='/add-job' className='nav-link'>
+                        <Link to='/add-job-vacancies' className='nav-link'>
                             <button type='button' className='signup-button'>Add Job Vacancies</button>
                         </Link>
                     </li>
@@ -90,7 +91,7 @@ const NavBar = ({isLoggedIn}) => {
                         }
                         
                         <li className='nav-item-mobile'>
-                            <Link to='/add-job' className='nav-link'>
+                            <Link to='/add-job-vacancies' className='nav-link'>
                                 <button type='button' className='signup-button'>Add Job Vacancies</button>
                             </Link>
                         </li>

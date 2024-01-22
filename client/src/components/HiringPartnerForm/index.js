@@ -203,7 +203,6 @@ const HiringPartnerForm = () => {
 
     const toggleVisibility = () => {
         if (window.scrollY > 100) {
-        //   console.log(window.innerHeight)
           setIsVisible(true);
         } else {
           setIsVisible(false);
@@ -620,6 +619,14 @@ const HiringPartnerForm = () => {
     };
 
     const sendEmail = (formData) => {
+        const languages = formData.personalDetails.languages.map((language) => language.value).join(', ')
+        const certification = formData.qualification.certification.map((certification) => certification.value).join(', ')
+        const workExperience = formData.qualification.workExperience.map((experience) => experience.value).join(', ')
+        const hiringDept = formData.about.hiringDept.join(', ')
+        formData.personalDetails.languages = languages
+        formData.qualification.certification = certification
+        formData.qualification.workExperience = workExperience
+        formData.about.hiringDept = hiringDept
         emailjs.send('service_fnv4y5p', 'template_op0us5b', formData, 'KzUehMbovr5UfqKRr')
         .then((result) => {
             console.log(result.text);

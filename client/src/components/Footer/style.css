@@ -46,6 +46,10 @@
     align-items: center;
 }
 
+.insta-icon {
+    font-size: 26px!important;
+}
+
 .footer-link {
     color: #3a4554;
     margin-left: 24px;
@@ -54,6 +58,10 @@
     line-height: 20px;
     cursor: pointer;
     text-decoration: underline;
+}
+
+.footer-social-media-image {
+    width: 25px;
 }
 
 @media screen and (max-width: 768px) {

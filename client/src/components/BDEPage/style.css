@@ -14,9 +14,10 @@
 }
 
 .head-span {
-    color: #f9a828;
+    color: #EB6A4D;
     text-decoration: underline;
 }
+
 
 .add-job-container {
     height: 75vh;
@@ -41,7 +42,7 @@
     padding: 20px 15px;
     flex-direction: column;
     border-radius: 10px;
-    border: 1px solid #f9a828;
+    border: 1px solid #EB6A4D;
     width: 50%;
     margin-top: 25px;
     margin-bottom: 10vh;
@@ -65,7 +66,7 @@
  }
 
  .bde-form-btn {
-    background-color: #f9a828;
+    background-color: #EB6A4D;
     color: #ffffff;
     border: none;
     border-radius: 5px;
@@ -97,7 +98,7 @@
 }
 
  .bde-form-btn:hover {
-    background-color: #f9a828;
+    background-color: #EB6A4D;
     color: #ffffff;
     border: none;
     border-radius: 5px;
@@ -109,7 +110,7 @@
     font-weight: 600;
     margin-top: 10px;
     height: 35px;
-    box-shadow: 0px 0px 10px 0px #f9a828;
+    box-shadow: 0px 0px 10px 0px #EB6A4D;
  }
 
  .bde-form-btn-an:hover {
@@ -137,7 +138,7 @@
  .bde-form-input {
     height: 35px;
     border-radius: 5px;
-    border: 1px solid #f9a828;
+    border: 1px solid #EB6A4D;
     width: 100%;
     margin-bottom: 16px;
     padding-left: 12px;

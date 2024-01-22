@@ -1,4 +1,5 @@
 import { FaFacebook, FaInstagram, FaLinkedin, FaTelegram, FaYoutube } from "react-icons/fa";
+import { AiFillInstagram } from "react-icons/ai";
 import './style.css';
 
 const Footer = () => {
@@ -9,13 +10,13 @@ const Footer = () => {
                     <FaFacebook className="footer-social-media-icon" />
                 </a>
                 <a href="https://www.instagram.com/earlyjobs/" className="footer-social-media-link" rel="noreferrer" target="_blank">
-                    <FaInstagram className="footer-social-media-icon" />
+                    <AiFillInstagram className="footer-social-media-icon insta-icon" />
                 </a>
                 <a href="https://www.linkedin.com/company/earlyjobs/" className="footer-social-media-link" rel="noreferrer" target="_blank">
                     <FaLinkedin className="footer-social-media-icon" />
                 </a>
-                <a href="google.com" className="footer-social-media-link" rel="noreferrer" target="_blank">
-                    <FaFacebook className="footer-social-media-icon" />
+                <a href="https://goformeet.co/" className="footer-social-media-link" rel="noreferrer" target="_blank">
+                    <img src="/favicon_logo.png" alt="goformeet" className="footer-social-media-image" />
                 </a>
                 <a href="https://www.t.me/earlyjobsoffice/" className="footer-social-media-link" rel="noreferrer" target="_blank">
                     <FaTelegram className="footer-social-media-icon" />
