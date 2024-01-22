@@ -114,7 +114,15 @@ const AddJobVacanciesPage = () => {
         console.log(newJob)
         setLoading(true)
         const db = getFirestore(app);
-        const docRef = await addDoc(collection(db, "AddJobVacancies"), { newJob });
+        // const docRef = await addDoc(collection(db, "AddJobVacancies"), { newJob });
+
+        const collectionRef = collection(db, "AddJobVacancies")
+        newJob.id = collectionRef.id
+        console.log("collection Refernce",collectionRef)
+        const docRef = await addDoc(collectionRef, newJob);
+
+        console.log(newJob)
+
         console.log(docRef)
         if(docRef) {
             sendEmail(newJob)
